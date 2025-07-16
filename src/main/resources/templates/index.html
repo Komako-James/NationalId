@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passport Application System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .tab-content {
+            padding: 20px;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            border-radius: 0 0 5px 5px;
+        }
+        .nav-tabs .nav-link {
+            font-weight: 500;
+        }
+        .required-field::after {
+            content: " *";
+            color: red;
+        }
+        .form-section {
+            margin-bottom: 30px;
+        }
+        .section-title {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Passport Application Form</h2>
+        
+        <ul class="nav nav-tabs" id="applicationTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="applicant-tab" data-bs-toggle="tab" data-bs-target="#applicant" type="button" role="tab">Applicant</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="residence-tab" data-bs-toggle="tab" data-bs-target="#residence" type="button" role="tab">Residence</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="origin-tab" data-bs-toggle="tab" data-bs-target="#origin" type="button" role="tab">Origin</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="parents-tab" data-bs-toggle="tab" data-bs-target="#parents" type="button" role="tab">Parents</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="biometrics-tab" data-bs-toggle="tab" data-bs-target="#biometrics" type="button" role="tab">Biometrics</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="documents-tab" data-bs-toggle="tab" data-bs-target="#documents" type="button" role="tab">Documents</button>
+            </li>
+        </ul>
+        
+        <form th:action="@{/submitApplication}" method="post" enctype="multipart/form-data" id="passportForm">
+            <div class="tab-content" id="applicationTabsContent">
+                
+                <!-- Applicant Tab -->
+                <div class="tab-pane fade show active" id="applicant" role="tabpanel">
+                    <div class="form-section">
+                        <h4 class="section-title">Personal Information</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="surname" class="form-label required-field">Surname</label>
+                                    <input type="text" class="form-control" id="surname" name="surname" th:value="${applicant?.surname}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="givenName" class="form-label required-field">Given Name</label>
+                                    <input type="text" class="form-control" id="givenName" name="givenName" th:value="${applicant?.givenName}" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="profession" class="form-label">Profession</label>
+                                    <input type="text" class="form-control" id="profession" name="profession" th:value="${applicant?.profession}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="nin" class="form-label required-field">National ID Number (NIN)</label>
+                                    <input type="text" class="form-control" id="nin" name="nin" th:value="${applicant?.nin}" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="cardNo" class="form-label">Card Number</label>
+                                    <input type="text" class="form-control" id="cardNo" name="cardNo" th:value="${applicant?.cardNumber}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="phoneNumber" class="form-label required-field">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" th:value="${applicant?.phoneNumber}" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="otherNumber" class="form-label">Other Phone Number</label>
+                                    <input type="tel" class="form-control" id="otherNumber" name="otherNumber" th:value="${applicant?.otherNumber}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="gender" class="form-label required-field">Gender</label>
+                                    <select class="form-select" id="gender" name="gender" required>
+                                        <option value="">Select Gender</option>
+                                        <option th:value="Male" th:selected="${applicant?.gender == 'Male'}">Male</option>
+                                        <option th:value="Female" th:selected="${applicant?.gender == 'Female'}">Female</option>
+                                        <option th:value="Other" th:selected="${applicant?.gender == 'Other'}">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="dob" class="form-label required-field">Date of Birth</label>
+                                    <input type="date" class="form-control" id="dob" name="dob" th:value="${applicant?.dateOfBirth}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="maritalStatus" class="form-label">Marital Status</label>
+                                    <select class="form-select" id="maritalStatus" name="maritalStatus">
+                                        <option value="">Select Marital Status</option>
+                                        <option th:value="Single" th:selected="${applicant?.maritalStatus == 'Single'}">Single</option>
+                                        <option th:value="Married" th:selected="${applicant?.maritalStatus == 'Married'}">Married</option>
+                                        <option th:value="Divorced" th:selected="${applicant?.maritalStatus == 'Divorced'}">Divorced</option>
+                                        <option th:value="Widowed" th:selected="${applicant?.maritalStatus == 'Widowed'}">Widowed</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="email" name="email" th:value="${applicant?.email}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="citizenshipType" class="form-label required-field">Citizenship Type</label>
+                                    <select class="form-select" id="citizenshipType" name="citizenshipType" required>
+                                        <option value="">Select Citizenship Type</option>
+                                        <option value="By Birth">By Birth</option>
+                                        <option value="By Naturalization">By Naturalization</option>
+                                        <option value="By Registration">By Registration</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" disabled>Previous</button>
+                        <button type="button" class="btn btn-primary next-tab" data-next-tab="residence-tab">Next</button>
+                    </div>
+                </div>
+                
+                <!-- Residential Address Tab -->
+                <div class="tab-pane fade" id="residence" role="tabpanel">
+                    <div class="form-section">
+                        <h4 class="section-title">Residential Address</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="resDistrict" class="form-label required-field">District</label>
+                                    <select class="form-select" id="resDistrict" name="resDistrict" required>
+                                        <option value="">Select District</option>
+                                        <option th:each="district : ${districts}" 
+                                                th:value="${district.id}" 
+                                                th:text="${district.districtName}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="resSubcounty" class="form-label required-field">Subcounty</label>
+                                    <select class="form-select" id="resSubcounty" name="resSubcounty" disabled required>
+                                        <option value="">Select Subcounty</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="resParish" class="form-label required-field">Parish</label>
+                                    <select class="form-select" id="resParish" name="resParish" disabled required>
+                                        <option value="">Select Parish</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="resVillage" class="form-label required-field">Village</label>
+                                    <select class="form-select" id="resVillage" name="resVillage" disabled required>
+                                        <option value="">Select Village</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary prev-tab" data-prev-tab="applicant-tab">Previous</button>
+                        <button type="button" class="btn btn-primary next-tab" data-next-tab="origin-tab">Next</button>
+                    </div>
+                </div>
+                
+                <!-- Origin Details Tab -->
+                <div class="tab-pane fade" id="origin" role="tabpanel">
+                    <div class="form-section">
+                        <h4 class="section-title">Details of Origin</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="originDistrict" class="form-label required-field">District</label>
+                                    <select class="form-select" id="originDistrict" name="originDistrict" required>
+                                        <option value="">Select District</option>
+                                        <option th:each="district : ${districts}" 
+                                                th:value="${district.id}" 
+                                                th:text="${district.districtName}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="originSubcounty" class="form-label required-field">Subcounty</label>
+                                    <select class="form-select" id="originSubcounty" name="originSubcounty" disabled required>
+                                        <option value="">Select Subcounty</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="originParish" class="form-label required-field">Parish</label>
+                                    <select class="form-select" id="originParish" name="originParish" disabled required>
+                                        <option value="">Select Parish</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="originVillage" class="form-label required-field">Village</label>
+                                    <select class="form-select" id="originVillage" name="originVillage" disabled required>
+                                        <option value="">Select Village</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary prev-tab" data-prev-tab="residence-tab">Previous</button>
+                        <button type="button" class="btn btn-primary next-tab" data-next-tab="parents-tab">Next</button>
+                    </div>
+                </div>
+                
+                <!-- Parents Tab -->
+                <div class="tab-pane fade" id="parents" role="tabpanel">
+                    <div class="form-section">
+                        <h4 class="section-title">Mother's Information</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="mothersName" class="form-label required-field">Mother's Name</label>
+                                    <input type="text" class="form-control" id="mothersName" name="mothersName" th:value="${mother?.mothersName}" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="motherDistrict" class="form-label required-field">District</label>
+                                    <select class="form-select" id="motherDistrict" name="motherDistrict" required>
+                                        <option value="">Select District</option>
+                                        <option th:each="district : ${districts}" 
+                                                th:value="${district.id}" 
+                                                th:text="${district.districtName}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="motherSubcounty" class="form-label required-field">Subcounty</label>
+                                    <select class="form-select" id="motherSubcounty" name="motherSubcounty" disabled required>
+                                        <option value="">Select Subcounty</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="motherParish" class="form-label required-field">Parish</label>
+                                    <select class="form-select" id="motherParish" name="motherParish" disabled required>
+                                        <option value="">Select Parish</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="motherVillage" class="form-label required-field">Village</label>
+                                    <select class="form-select" id="motherVillage" name="motherVillage" disabled required>
+                                        <option value="">Select Village</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h4 class="section-title">Father's Information</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="fathersName" class="form-label required-field">Father's Name</label>
+                                    <input type="text" class="form-control" id="fathersName" name="fathersName" th:value="${father?.fathersName}" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="fatherDistrict" class="form-label required-field">District</label>
+                                    <select class="form-select" id="fatherDistrict" name="fatherDistrict" required>
+                                        <option value="">Select District</option>
+                                        <option th:each="district : ${districts}" 
+                                                th:value="${district.id}" 
+                                                th:text="${district.districtName}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="fatherSubcounty" class="form-label required-field">Subcounty</label>
+                                    <select class="form-select" id="fatherSubcounty" name="fatherSubcounty" disabled required>
+                                        <option value="">Select Subcounty</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="fatherParish" class="form-label required-field">Parish</label>
+                                    <select class="form-select" id="fatherParish" name="fatherParish" disabled required>
+                                        <option value="">Select Parish</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="fatherVillage" class="form-label required-field">Village</label>
+                                    <select class="form-select" id="fatherVillage" name="fatherVillage" disabled required>
+                                        <option value="">Select Village</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary prev-tab" data-prev-tab="origin-tab">Previous</button>
+                        <button type="button" class="btn btn-primary next-tab" data-next-tab="biometrics-tab">Next</button>
+                    </div>
+                </div>
+                
+                <!-- Biometrics Tab -->
+                <div class="tab-pane fade" id="biometrics" role="tabpanel">
+                    <div class="form-section">
+                        <h4 class="section-title">Biometric Information</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="applicantPhoto" class="form-label required-field">Applicant Photo</label>
+                                    <input type="file" class="form-control" id="applicantPhoto" name="applicantPhoto" accept="image/*" required>
+                                    <small class="text-muted">Please upload a clear passport photo</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="fingerprint" class="form-label required-field">Fingerprint</label>
+                                    <input type="file" class="form-control" id="fingerprint" name="fingerprint" accept="image/*" required>
+                                    <small class="text-muted">Upload a scanned fingerprint image</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="preview-container">
+                                    <h6>Photo Preview</h6>
+                                    <img id="photoPreview" src="#" alt="Photo Preview" style="max-width: 200px; display: none;">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="preview-container">
+                                    <h6>Fingerprint Preview</h6>
+                                    <img id="fingerprintPreview" src="#" alt="Fingerprint Preview" style="max-width: 200px; display: none;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary prev-tab" data-prev-tab="parents-tab">Previous</button>
+                        <button type="button" class="btn btn-primary next-tab" data-next-tab="documents-tab">Next</button>
+                    </div>
+                </div>
+                
+                <!-- Documents Tab -->
+                <div class="tab-pane fade" id="documents" role="tabpanel">
+                    <div class="form-section">
+                        <h4 class="section-title">Supporting Documents</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="document1" class="form-label required-field">Document 1</label>
+                                    <input type="file" class="form-control" id="document1" name="document1" accept=".pdf,.jpg,.jpeg,.png" required>
+                                    <small class="text-muted">Upload a supporting document (PDF, JPG, PNG)</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="document2" class="form-label">Document 2</label>
+                                    <input type="file" class="form-control" id="document2" name="document2" accept=".pdf,.jpg,.jpeg,.png">
+                                    <small class="text-muted">Upload another supporting document (optional)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h4 class="section-title">Duplicate Check</h4>
+                        <div class="alert alert-info">
+                            <p>Before submitting your application, please check for possible duplicates in our system.</p>
+                            <button type="button" class="btn btn-warning" id="checkDuplicates">Check for Duplicates</button>
+                        </div>
+                        
+                        <div id="duplicateResults" class="mt-3" style="display: none;">
+                            <div class="alert alert-warning">
+                                <h5>Potential Duplicate Found</h5>
+                                <div id="duplicateDetails"></div>
+                                <p class="mt-2">If this is not you, please proceed with your application.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary prev-tab" data-prev-tab="biometrics-tab">Previous</button>
+                        <button type="submit" class="btn btn-success">Submit Application</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Tab navigation
+            $('.next-tab').click(function() {
+                var nextTab = $(this).data('next-tab');
+                $('#' + nextTab).tab('show');
+            });
+            
+            $('.prev-tab').click(function() {
+                var prevTab = $(this).data('prev-tab');
+                $('#' + prevTab).tab('show');
+            });
+            
+            // Image preview for biometrics
+            function readURL(input, previewId) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        $('#' + previewId).attr('src', e.target.result);
+                        $('#' + previewId).show();
+                    }
+                    
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+            
+            $("#applicantPhoto").change(function() {
+                readURL(this, 'photoPreview');
+            });
+            
+            $("#fingerprint").change(function() {
+                readURL(this, 'fingerprintPreview');
+            });
+            
+            // Cascading dropdowns for address fields
+            function setupCascadingDropdown(parentId, childId, url, childLabel, nextChildId) {
+                $('#' + parentId).change(function() {
+                    var parentValue = $(this).val();
+                    var $child = $('#' + childId);
+                    
+                    if (parentValue) {
+                        $child.empty().append('<option value="">Loading...</option>').prop('disabled', false);
+                        
+                        // In a real application, you would make an AJAX call here
+                        // For this example, we'll simulate it with a timeout
+                        setTimeout(function() {
+                            // Simulated response - in a real app, this would come from the server
+                            var simulatedResponse = [
+                                {id: 1, name: childLabel + " 1"},
+                                {id: 2, name: childLabel + " 2"},
+                                {id: 3, name: childLabel + " 3"}
+                            ];
+                            
+                            $child.empty().append('<option value="">Select ' + childLabel + '</option>');
+                            
+                            $.each(simulatedResponse, function(index, item) {
+                                $child.append($('<option>', {
+                                    value: item.id,
+                                    text: item.name
+                                }));
+                            });
+                            
+                            // If there's a next child dropdown, reset it
+                            if (nextChildId) {
+                                $('#' + nextChildId).empty().append('<option value="">Select first</option>').prop('disabled', true);
+                            }
+                        }, 500);
+                    } else {
+                        $child.empty().append('<option value="">Select first</option>').prop('disabled', true);
+                        
+                        if (nextChildId) {
+                            $('#' + nextChildId).empty().append('<option value="">Select first</option>').prop('disabled', true);
+                        }
+                    }
+                });
+            }
+            
+            // Set up all cascading dropdowns
+            setupCascadingDropdown('resDistrict', 'resSubcounty', '/api/subcounties', 'Subcounty', 'resParish');
+            setupCascadingDropdown('resSubcounty', 'resParish', '/api/parishes', 'Parish', 'resVillage');
+            setupCascadingDropdown('resParish', 'resVillage', '/api/villages', 'Village', null);
+            
+            setupCascadingDropdown('originDistrict', 'originSubcounty', '/api/subcounties', 'Subcounty', 'originParish');
+            setupCascadingDropdown('originSubcounty', 'originParish', '/api/parishes', 'Parish', 'originVillage');
+            setupCascadingDropdown('originParish', 'originVillage', '/api/villages', 'Village', null);
+            
+            setupCascadingDropdown('motherDistrict', 'motherSubcounty', '/api/subcounties', 'Subcounty', 'motherParish');
+            setupCascadingDropdown('motherSubcounty', 'motherParish', '/api/parishes', 'Parish', 'motherVillage');
+            setupCascadingDropdown('motherParish', 'motherVillage', '/api/villages', 'Village', null);
+            
+            setupCascadingDropdown('fatherDistrict', 'fatherSubcounty', '/api/subcounties', 'Subcounty', 'fatherParish');
+            setupCascadingDropdown('fatherSubcounty', 'fatherParish', '/api/parishes', 'Parish', 'fatherVillage');
+            setupCascadingDropdown('fatherParish', 'fatherVillage', '/api/villages', 'Village', null);
+            
+            // Duplicate check
+            $('#checkDuplicates').click(function() {
+                // Simulate duplicate check
+                $('#duplicateResults').hide();
+                
+                // Show loading state
+                $(this).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Checking...');
+                
+                // Simulate server call
+                setTimeout(function() {
+                    // Reset button
+                    $('#checkDuplicates').html('Check for Duplicates');
+                    
+                    // In a real application, this would come from the server
+                    // For demo purposes, we'll sometimes show a duplicate
+                    if (Math.random() > 0.5) {
+                        var duplicateHtml = `
+                            <p><strong>Name:</strong> John Doe</p>
+                            <p><strong>Date of Birth:</strong> 1985-05-15</p>
+                            <p><strong>NIN:</strong> CM850515123456789</p>
+                        `;
+                        $('#duplicateDetails').html(duplicateHtml);
+                        $('#duplicateResults').show();
+                    } else {
+                        alert('No duplicates found. You can proceed with your application.');
+                    }
+                }, 1500);
+            });
+            
+            // Form validation before submission
+            $('#passportForm').submit(function(e) {
+                // Check if all required fields are filled
+                var isValid = true;
+                $('[required]').each(function() {
+                    if (!$(this).val()) {
+                        isValid = false;
+                        $(this).addClass('is-invalid');
+                    } else {
+                        $(this).removeClass('is-invalid');
+                    }
+                });
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Please fill in all required fields before submitting.');
+                    // Find the first tab with invalid fields and show it
+                    $('.is-invalid').first().closest('.tab-pane').each(function() {
+                        var tabId = $(this).attr('id');
+                        $('.nav-tabs a[href="#' + tabId + '"]').tab('show');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
